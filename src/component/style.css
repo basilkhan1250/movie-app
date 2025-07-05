@@ -132,17 +132,19 @@
 .title {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 30px;
 }
 
 .movie-card {
     width: 400px;
     text-align: center;
     cursor: pointer;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 10px;
     height: 320px;
+    box-shadow: 3px 3px 10px 1px  #555;
 }
 
 .movie-card img {
