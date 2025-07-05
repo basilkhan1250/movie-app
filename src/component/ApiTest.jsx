@@ -3,6 +3,7 @@ import "./style.css";
 
 const ApiTest = ({ movie }) => {
     const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
 
@@ -20,6 +21,7 @@ const ApiTest = ({ movie }) => {
 
         async function fetchMovie() {
             try {
+                setLoading(true)
                 const response = await fetch(url, options);
                 const data = await response.json();
                 setMovies(data.results);
@@ -29,6 +31,9 @@ const ApiTest = ({ movie }) => {
                 console.log(data)
             } catch (error) {
                 console.error(error);
+            }
+            finally {
+                setLoading(false)
             }
         }
 
@@ -53,24 +58,31 @@ const ApiTest = ({ movie }) => {
             <div className="container">
                 <h1>Results {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1>
 
-                <div className="title">
-                    {movies.length > 0 ? (
-                        movies.map((m, index) => (
-                            m.backdrop_path || m.poster_path ? (
-                                <div key={index} className="movie-card">
-                                    <div className="movie-card-img">
-                                        <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
+                {loading ? (
+                    <div className="loader-wrapper">
+                        <div class="loader"></div>
+                    </div>
+                ) : (
+                    <div className="title">
+                        {movies.length > 0 ? (
+                            movies.map((m, index) => (
+                                m.backdrop_path || m.poster_path ? (
+                                    <div key={index} className="movie-card">
+                                        <div className="movie-card-img">
+                                            <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
+                                        </div>
+                                        <h2>{m.title}</h2>
+                                        <p>Release Date: {m.release_date}</p>
                                     </div>
-                                    <h2>{m.title}</h2>
-                                    <p>Release Date: {m.release_date}</p>
-                                </div>
-                            ) : ""
-                        ))
-                    ) : (
-                        <p>No results found.</p>
-                    )}
-                </div>
+                                ) : ""
+                            ))
+                        ) : (
+                            <p>No results found.</p>
+                        )}
+                    </div>
+                )}
             </div>
+
             {movie.length > 0 && (
                 <div className="pagination">
                     <button onClick={previousPage} disabled={page === 1}>Previous Page</button>
