@@ -58,7 +58,9 @@ const ApiTest = ({ movie }) => {
                         movies.map((m, index) => (
                             m.backdrop_path || m.poster_path ? (
                                 <div key={index} className="movie-card">
-                                    <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
+                                    <div className="movie-card-img">
+                                        <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
+                                    </div>
                                     <h2>{m.title}</h2>
                                     <p>Release Date: {m.release_date}</p>
                                 </div>
