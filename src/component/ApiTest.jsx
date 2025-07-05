@@ -1,0 +1,83 @@
+import { useEffect, useState } from "react";
+import "./style.css";
+
+const ApiTest = ({ movie }) => {
+    const [movies, setMovies] = useState([]);
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+
+    useEffect(() => {
+        if (!movie.trim()) return;
+
+        const url = `https://api.themoviedb.org/3/search/movie?query=${movie}&include_adult=false&language=en-US&page=${page}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYmI0MmI4ZWE1ZmFmNzJiZGRhYmU2MjllMDMwOTE3MSIsIm5iZiI6MTc0OTkxNzE4Ny45MDMsInN1YiI6IjY4NGQ5ZTAzZDM3NGVlZjM5ZjNmZTA2YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.itvfzkB_x0ll4c0w4NZiseaoQt0nvNuC-xxU29fNzmc'
+            }
+        };
+
+        async function fetchMovie() {
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                setMovies(data.results);
+                setTotalPages(data.total_pages)
+                console.log(data.results)
+                console.log(data.total_pages)
+                console.log(data)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchMovie();
+
+    }, [movie, page]);
+
+    const nextPage = () => {
+        if (page < totalPages) {
+            setPage(pre => pre + 1)
+        }
+    }
+
+    const previousPage = () => {
+        if (page > 1) {
+            setPage(pre => pre - 1)
+        }
+    }
+
+    return (
+        <>
+            <div className="container">
+                <h1>Results {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1>
+
+                <div className="title">
+                    {movies.length > 0 ? (
+                        movies.map((m, index) => (
+                            m.backdrop_path || m.poster_path ? (
+                                <div key={index} className="movie-card">
+                                    <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
+                                    <h2>{m.title}</h2>
+                                    <p>Release Date: {m.release_date}</p>
+                                </div>
+                            ) : ""
+                        ))
+                    ) : (
+                        <p>No results found.</p>
+                    )}
+                </div>
+            </div>
+            {movie.length > 0 && (
+                <div className="pagination">
+                    <button onClick={previousPage} disabled={page === 1}>Previous Page</button>
+                    <span>Page {page} of {totalPages}</span>
+                    <button onClick={nextPage} disabled={page === totalPages}>Next Page</button>
+                </div>
+            )}
+        </>
+    );
+};
+
+export default ApiTest;
