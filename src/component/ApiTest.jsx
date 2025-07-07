@@ -5,12 +5,12 @@ const ApiTest = ({ movie }) => {
     const [movies, setMovies] = useState([]);
     const [topMovies, setTopMovies] = useState([])
     const [loading, setLoading] = useState(false)
+    const [topLoading, setTopLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
 
 
     useEffect(() => {
-
         const url = 'https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1';
         const options = {
             method: 'GET',
@@ -22,12 +22,15 @@ const ApiTest = ({ movie }) => {
 
         async function fetchTopMovie() {
             try {
+                setTopLoading(true)
                 const response = await fetch(url, options);
                 const data = await response.json();
                 setTopMovies(data.results)
                 console.log(data.results)
             } catch (error) {
                 console.error(error)
+            } finally {
+                setTopLoading(false)
             }
         }
 
@@ -57,6 +60,7 @@ const ApiTest = ({ movie }) => {
                 const data = await response.json();
                 setMovies(data.results);
                 setTotalPages(data.total_pages)
+                setTopMovies(false)
                 console.log(movies)
                 console.log(data.results)
                 console.log(data.total_pages)
@@ -90,7 +94,7 @@ const ApiTest = ({ movie }) => {
             <div className="container">
                 {/* <h1>Results {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1> */}
 
-                {loading ? (
+                {topLoading ? (
                     <div className="loader-wrapper">
                         <div class="loader"></div>
                     </div>
@@ -107,11 +111,10 @@ const ApiTest = ({ movie }) => {
                                     <p>Release Date: {m.release_date}</p>
                                 </div>
                             ))
-                        ) : ("nothin"
+                        ) : (""
                         )}
                     </div>
                 )}
-
 
                 {loading ? (
                     <div className="loader-wrapper">
