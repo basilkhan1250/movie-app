@@ -46,6 +46,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    margin-bottom: 40px;
 }
 
 .Navbar h1 {
@@ -254,4 +255,73 @@
     to {
         transform: rotate(1turn)
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Blur effect */
+.container.blur {
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+/* Fullscreen overlay */
+.movie-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Movie details modal */
+.movie-details {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    color: black;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.movie-details img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.movie-details button {
+    margin-top: 15px;
+    padding: 8px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Optional loader wrapper centering */
+.loader-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
 }

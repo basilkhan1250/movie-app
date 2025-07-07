@@ -3,9 +3,40 @@ import "./style.css";
 
 const ApiTest = ({ movie }) => {
     const [movies, setMovies] = useState([]);
+    const [topMovies, setTopMovies] = useState([])
     const [loading, setLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
+
+
+    useEffect(() => {
+
+        const url = 'https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1';
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYmI0MmI4ZWE1ZmFmNzJiZGRhYmU2MjllMDMwOTE3MSIsIm5iZiI6MTc0OTkxNzE4Ny45MDMsInN1YiI6IjY4NGQ5ZTAzZDM3NGVlZjM5ZjNmZTA2YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.itvfzkB_x0ll4c0w4NZiseaoQt0nvNuC-xxU29fNzmc'
+            }
+        };
+
+        async function fetchTopMovie() {
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                setTopMovies(data.results)
+                console.log(data.results)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        fetchTopMovie()
+
+    }, [])
+
+
+
 
     useEffect(() => {
         if (!movie.trim()) return;
@@ -26,6 +57,7 @@ const ApiTest = ({ movie }) => {
                 const data = await response.json();
                 setMovies(data.results);
                 setTotalPages(data.total_pages)
+                console.log(movies)
                 console.log(data.results)
                 console.log(data.total_pages)
                 console.log(data)
@@ -56,7 +88,30 @@ const ApiTest = ({ movie }) => {
     return (
         <>
             <div className="container">
-                <h1>Results {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1>
+                {/* <h1>Results {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1> */}
+
+                {loading ? (
+                    <div className="loader-wrapper">
+                        <div class="loader"></div>
+                    </div>
+                ) : (
+                    <div className="title">
+                        {topMovies.length > 0 ? (
+                            topMovies.map((m, index) => (
+
+                                <div key={index} className="movie-card">
+                                    <div className="movie-card-img">
+                                        <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
+                                    </div>
+                                    <h2>{m.title}</h2>
+                                    <p>Release Date: {m.release_date}</p>
+                                </div>
+                            ))
+                        ) : ("nothin"
+                        )}
+                    </div>
+                )}
+
 
                 {loading ? (
                     <div className="loader-wrapper">
@@ -76,8 +131,8 @@ const ApiTest = ({ movie }) => {
                                     </div>
                                 ) : ""
                             ))
-                        ) : (
-                            <p>No results found.</p>
+                        ) : (""
+                            // <p>No results found.</p>
                         )}
                     </div>
                 )}
