@@ -8,10 +8,18 @@ const ApiTest = ({ movie }) => {
     const [topLoading, setTopLoading] = useState(false)
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
+    const [poster, setPoster] = useState(null)
 
+    const handlePoster = (movies) => {
+        setPoster(movies)
+    }
 
     useEffect(() => {
-        const url = 'https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1';
+        const url = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US'; //{Trending}//
+        // const url = 'https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1'; // {Upcoming}//
+        // const url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1'; //{Popular}//
+        // const url = 'https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1'; //{Now Playing} //
+        // const url = 'https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1';  //{Top Rated}//
         const options = {
             method: 'GET',
             headers: {
@@ -102,8 +110,7 @@ const ApiTest = ({ movie }) => {
                     <div className="title">
                         {topMovies.length > 0 ? (
                             topMovies.map((m, index) => (
-
-                                <div key={index} className="movie-card">
+                                <div key={index} className="movie-card" onClick={() => handlePoster(m)}>
                                     <div className="movie-card-img">
                                         <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
                                     </div>
@@ -125,7 +132,7 @@ const ApiTest = ({ movie }) => {
                         {movies.length > 0 ? (
                             movies.map((m, index) => (
                                 m.backdrop_path || m.poster_path ? (
-                                    <div key={index} className="movie-card">
+                                    <div key={index} className="movie-card" onClick={() => handlePoster(m)}>
                                         <div className="movie-card-img">
                                             <img src={`https://image.tmdb.org/t/p/w500${m.backdrop_path || m.poster_path}`} alt={m.title} />
                                         </div>
@@ -134,12 +141,28 @@ const ApiTest = ({ movie }) => {
                                     </div>
                                 ) : ""
                             ))
-                        ) : (""
-                            // <p>No results found.</p>
+                        ) : (
+                            ""
                         )}
                     </div>
                 )}
             </div>
+
+            {poster && (
+                <div className="modal-overlay" onClick={() => setPoster(null)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={`https://image.tmdb.org/t/p/original${poster.poster_path || poster.backdrop_path}`}
+                            alt={poster.title}
+                        />
+                        <h2>{poster.title}</h2>
+                        <p>Release Date: {poster.release_date}</p>
+                        <p className="overview">{poster.overview?.split(" ").slice(0, 15).join(" ") + "..."}</p>
+                        <button onClick={() => setPoster(null)}>Close</button>
+                    </div>
+                </div>
+            )}
+
 
             {movie.length > 0 && (
                 <div className="pagination">
