@@ -9,17 +9,53 @@ const ApiTest = ({ movie }) => {
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [poster, setPoster] = useState(null)
+    const [activeCategory, setActiveCategory] = useState("top_rated")
+
+
+
+    const categoryLabels = {
+        top_rated: "Top Rated Movies",
+        upcoming: "Upcoming Movies",
+        trending: "Trending Movies",
+        popular: "Popular Movies",
+        nowplaying: "Now Playing Movies"
+    };
+
 
     const handlePoster = (movies) => {
         setPoster(movies)
     }
 
-    useEffect(() => {
-        const url = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US'; //{Trending}//
-        // const url = 'https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1'; // {Upcoming}//
-        // const url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1'; //{Popular}//
-        // const url = 'https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1'; //{Now Playing} //
-        // const url = 'https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1';  //{Top Rated}//
+
+
+
+    async function fetchCategory(type = "top_rated") {
+        let endpoint = "";
+
+        if (type === "trending") {
+            endpoint = "trending/movie/day?language=en-US"
+        }
+        else if (type === "upcoming") {
+            endpoint = "movie/upcoming?language=en-US&page=1"
+        }
+        else if (type === "popular") {
+            endpoint = "movie/popular?language=en-US&page=1"
+        }
+        else if (type === "nowplaying") {
+            endpoint = "movie/now_playing?language=en-US&page=1"
+        }
+        else {
+            endpoint = "movie/top_rated?language=en-US&page=1"
+        }
+
+
+        // const url = 'https://api.themoviedb.org/3/'; //{Trending}//
+        // const url = 'https://api.themoviedb.org/3/'; // {Upcoming}//
+        // const url = 'https://api.themoviedb.org/3/'; //{Popular}//
+        // const url = 'https://api.themoviedb.org/3/'; //{Now Playing} //
+
+
+        const url = `https://api.themoviedb.org/3/${endpoint}`;  //{Top Rated}//
         const options = {
             method: 'GET',
             headers: {
@@ -28,22 +64,22 @@ const ApiTest = ({ movie }) => {
             }
         };
 
-        async function fetchTopMovie() {
-            try {
-                setTopLoading(true)
-                const response = await fetch(url, options);
-                const data = await response.json();
-                setTopMovies(data.results)
-                console.log(data.results)
-            } catch (error) {
-                console.error(error)
-            } finally {
-                setTopLoading(false)
-            }
+        try {
+            setTopLoading(true)
+            const response = await fetch(url, options);
+            const data = await response.json();
+            setTopMovies(data.results)
+            console.log(data.results)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setTopLoading(false)
         }
+    }
 
-        fetchTopMovie()
 
+    useEffect(() => {
+        fetchCategory("top_rated")
     }, [])
 
 
@@ -99,8 +135,38 @@ const ApiTest = ({ movie }) => {
 
     return (
         <>
+
+
             <div className="container">
-                {/* <h1>Results {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1> */}
+
+                {movie.trim().length > 0 ? (
+                    <h1 className="results" id="top" >Results for {movie.replace(/\b\w/g, char => char.toUpperCase())}</h1>
+                ) : (
+                    <h1 className="showing" id="top">Showing: {categoryLabels[activeCategory]}</h1>
+                )}
+
+
+                <div className="container-btns">
+                    <button onClick={() => {
+                        fetchCategory("upcoming")
+                        setActiveCategory("upcoming")
+                    }}>Upcoming</button>
+                    <button onClick={() => {
+                        fetchCategory("trending")
+                        setActiveCategory("trending")
+                    }}>Trending</button>
+                    <button onClick={() => {
+                        fetchCategory("popular")
+                        setActiveCategory("popular")
+                    }}>Popular</button>
+                    <button onClick={() => {
+                        fetchCategory("nowplaying")
+                        setActiveCategory("nowplaying")
+                    }}>Now Playing</button>
+                </div>
+
+
+
 
                 {topLoading ? (
                     <div className="loader-wrapper">
@@ -171,6 +237,12 @@ const ApiTest = ({ movie }) => {
                     <button onClick={nextPage} disabled={page === totalPages}>Next Page</button>
                 </div>
             )}
+            <button className="scroll-top-btn" id="top" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+                {/* <a href="#top"> */}
+                ⬆️
+                {/* </a> */}
+            </button>
+
         </>
     );
 };
